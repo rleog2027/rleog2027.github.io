@@ -1,159 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tribe of Levi and Kohanim Registry</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            text-align: center;
-        }
-        form {
-            margin: 20px auto;
-            width: 50%;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-        input, select, button {
-            display: block;
-            margin: 10px auto;
-            padding: 10px;
-            width: 80%;
-        }
-        .search-results {
-            margin-top: 30px;
-        }
-        img.profile-pic {
-            max-width: 100px;
-            border-radius: 50%;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tribe of Levi and Kohanim Registry (LocalStorage Version)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      text-align: center;
+    }
+    form {
+      margin: 20px auto;
+      width: 50%;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    input, select, button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 80%;
+    }
+    .search-results {
+      margin-top: 30px;
+    }
+    img.profile-pic {
+      max-width: 100px;
+      border-radius: 50%;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Tribe of Levi and Kohanim Registry</h1>
-    
-    <div id="login">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <input type="email" id="loginEmail" placeholder="Email" required>
-            <input type="password" id="loginPassword" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-    </div>
+  <h1>Tribe of Levi and Kohanim Registry (LocalStorage)</h1>
+  
+  <div id="login">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
 
-    <div id="register">
-        <h2>Create Profile</h2>
-        <form id="registerForm">
-            <input type="text" id="fullName" placeholder="Full Name" required>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <input type="text" id="hebrewName" placeholder="Hebrew Name" required>
-            <select id="status" required>
-                <option value="">Select Status</option>
-                <option value="kohen">Kohen</option>
-                <option value="levi">Levi</option>
-            </select>
-            <select id="minhag" required>
-                <option value="">Select Minhag</option>
-                <option value="ashkenazi">Ashkenazi</option>
-                <option value="sefardi">Sefardi</option>
-                <option value="temani">Temani</option>
-                <option value="chabad">Chabad/Ari</option>
-            </select>
-            <input type="file" id="profilePic" accept="image/*">
-            <button type="submit">Register</button>
-        </form>
-    </div>
+  <div id="register">
+    <h2>Create Profile</h2>
+    <form id="registerForm">
+      <input type="text" id="fullName" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="text" id="hebrewName" placeholder="Hebrew Name" required>
+      <select id="status" required>
+        <option value="">Select Status</option>
+        <option value="kohen">Kohen</option>
+        <option value="levi">Levi</option>
+      </select>
+      <select id="minhag" required>
+        <option value="">Select Minhag</option>
+        <option value="ashkenazi">Ashkenazi</option>
+        <option value="sefardi">Sefardi</option>
+        <option value="temani">Temani</option>
+        <option value="chabad">Chabad/Ari</option>
+      </select>
+      <input type="file" id="profilePic" accept="image/*">
+      <button type="submit">Register</button>
+    </form>
+  </div>
 
-    <div id="search">
-        <h2>Search Profiles</h2>
-        <input type="text" id="searchQuery" placeholder="Search by name or email">
-        <button onclick="searchProfiles()">Search</button>
-        <div class="search-results" id="results"></div>
-    </div>
+  <div id="search">
+    <h2>Search Profiles</h2>
+    <input type="text" id="searchQuery" placeholder="Search by name or email">
+    <button onclick="searchProfiles()">Search</button>
+    <div class="search-results" id="results"></div>
+  </div>
 
-    <script>
-        const profiles = [];
+  <script>
+    // Use 'let' so we can reassign after loading from localStorage
+    let profiles = [];
 
-        document.getElementById('registerForm').onsubmit = function(event) {
-            event.preventDefault();
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const hebrewName = document.getElementById('hebrewName').value;
-            const status = document.getElementById('status').value;
-            const minhag = document.getElementById('minhag').value;
-            const profilePic = document.getElementById('profilePic').files[0];
-            
-            if (!status || !minhag) {
-                alert('Please select a status and minhag.');
-                return;
-            }
+    // 1) On page load, retrieve 'profiles' from localStorage (if it exists)
+    window.onload = function() {
+      const storedProfiles = localStorage.getItem('profiles');
+      if (storedProfiles) {
+        profiles = JSON.parse(storedProfiles);
+      }
+    };
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const profile = {
-                    fullName,
-                    email,
-                    password,
-                    hebrewName,
-                    status,
-                    minhag,
-                    profilePic: e.target.result
-                };
-                profiles.push(profile);
-                alert('Profile created successfully!');
-                document.getElementById('registerForm').reset();
-            };
-            
-            if (profilePic) {
-                reader.readAsDataURL(profilePic);
-            } else {
-                reader.onload();
-            }
+    // 2) Register Form Submission
+    document.getElementById('registerForm').onsubmit = function(event) {
+      event.preventDefault();
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const hebrewName = document.getElementById('hebrewName').value;
+      const status = document.getElementById('status').value;
+      const minhag = document.getElementById('minhag').value;
+      const profilePic = document.getElementById('profilePic').files[0];
+      
+      if (!status || !minhag) {
+        alert('Please select a status and minhag.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const profile = {
+          fullName,
+          email,
+          password,
+          hebrewName,
+          status,
+          minhag,
+          profilePic: e.target.result // base64 string
         };
+        profiles.push(profile);
 
-        document.getElementById('loginForm').onsubmit = function(event) {
-            event.preventDefault();
-            const loginEmail = document.getElementById('loginEmail').value;
-            const loginPassword = document.getElementById('loginPassword').value;
-            const user = profiles.find(profile => 
-                profile.email.toLowerCase() === loginEmail.toLowerCase() && 
-                profile.password === loginPassword
-            );
-            if (user) {
-                alert(`Welcome back, ${user.fullName}!`);
-            } else {
-                alert('Invalid login credentials.');
-            }
-        };
+        // Save to localStorage each time we modify 'profiles'
+        localStorage.setItem('profiles', JSON.stringify(profiles));
 
-        function searchProfiles() {
-            const query = document.getElementById('searchQuery').value.toLowerCase();
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
+        alert('Profile created successfully!');
+        document.getElementById('registerForm').reset();
+      };
+      
+      if (profilePic) {
+        reader.readAsDataURL(profilePic);
+      } else {
+        // If no image selected, just push the data
+        reader.onload();
+      }
+    };
 
-            const filteredProfiles = profiles.filter(profile => 
-                profile.fullName.toLowerCase().includes(query) || 
-                profile.email.toLowerCase().includes(query)
-            );
+    // 3) Login Form Submission
+    document.getElementById('loginForm').onsubmit = function(event) {
+      event.preventDefault();
+      const loginEmail = document.getElementById('loginEmail').value;
+      const loginPassword = document.getElementById('loginPassword').value;
 
-            if (filteredProfiles.length) {
-                filteredProfiles.forEach(profile => {
-                    resultsDiv.innerHTML += `<p>${profile.fullName} (${profile.status}, ${profile.minhag}) - ${profile.email}</p>`;
-                    if (profile.profilePic) {
-                        resultsDiv.innerHTML += `<img class="profile-pic" src="${profile.profilePic}" alt="Profile Picture">`;
-                    }
-                });
-            } else {
-                resultsDiv.innerHTML = '<p>No profiles found.</p>';
-            }
-        }
-    </script>
+      // Search for the matching profile in 'profiles'
+      const user = profiles.find(profile => 
+        profile.email.toLowerCase() === loginEmail.toLowerCase() && 
+        profile.password === loginPassword
+      );
+      if (user) {
+        alert(`Welcome back, ${user.fullName}!`);
+      } else {
+        alert('Invalid login credentials.');
+      }
+    };
+
+    // 4) Search Profiles
+    function searchProfiles() {
+      const query = document.getElementById('searchQuery').value.toLowerCase();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      // Filter 'profiles' array by partial match in name or email
+      const filteredProfiles = profiles.filter(profile => 
+        profile.fullName.toLowerCase().includes(query) || 
+        profile.email.toLowerCase().includes(query)
+      );
+
+      if (filteredProfiles.length) {
+        filteredProfiles.forEach(profile => {
+          resultsDiv.innerHTML += `
+            <p>${profile.fullName} (${profile.status}, ${profile.minhag}) - ${profile.email}</p>
+          `;
+          if (profile.profilePic) {
+            resultsDiv.innerHTML += `
+              <img class="profile-pic" src="${profile.profilePic}" alt="Profile Picture">
+            `;
+          }
+        });
+      } else {
+        resultsDiv.innerHTML = '<p>No profiles found.</p>';
+      }
+    }
+  </script>
 </body>
 </html>
