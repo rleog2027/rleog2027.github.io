@@ -45,16 +45,16 @@
       <input type="text" id="hebrewName" placeholder="Hebrew Name" required>
       <select id="status" required>
         <option value="">Select Status</option>
-        <option value="kohen">Kohen</option>
-        <option value="levi">Levi</option>
+        <option value="Kohen">Kohen</option>
+        <option value="Levi">Levi</option>
       </select>
       <select id="minhag" required>
         <option value="">Select Minhag</option>
-        <option value="ashkenazi">Ashkenazi</option>
-        <option value="sefardi">Sefardi</option>
-        <option value="sefard">Sefard</option>
-        <option value="temani">Temani</option>
-        <option value="chabad">Chabad/Ari</option>
+        <option value="Ashkenazi">Ashkenazi</option>
+        <option value="Sephardi">Sephardi</option>
+        <option value="Sefard">Sefard</option>
+        <option value="Temani">Temani</option>
+        <option value="Chabad">Chabad/Ari</option>
       </select>
       <input type="file" id="profilePic" accept="image/*">
       <button type="submit">Register</button>
@@ -149,7 +149,7 @@
         filteredProfiles.forEach(profile => {
           resultsDiv.innerHTML += `
             <p>
-              <strong>${profile.fullName}</strong> (${profile.status}, ${profile.minhag})<br>
+              <strong>${profile.fullName}</strong> (${capitalize(profile.status)}, ${capitalize(profile.minhag)})<br>
               <em>Hebrew Name:</em> ${profile.hebrewName}<br>
               <em>Email:</em> ${profile.email}
             </p>
@@ -163,6 +163,11 @@
       } else {
         resultsDiv.innerHTML = '<p>No profiles found.</p>';
       }
+    }
+
+    // Helper function to capitalize first letter
+    function capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     }
   </script>
 </body>
