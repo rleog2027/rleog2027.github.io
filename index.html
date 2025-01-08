@@ -1,191 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tribe of Levi and Kohanim Registry (LocalStorage Version)</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      text-align: center;
-    }
-    form {
-      margin: 20px auto;
-      width: 50%;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-    }
-    input, select, button {
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      width: 80%;
-    }
-    .search-results {
-      margin-top: 30px;
-    }
-    img.profile-pic {
-      max-width: 100px;
-      border-radius: 50%;
-      margin-top: 10px;
-    }
-    #bsed {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-family: 'David', serif;
-      font-size: 18px;
-    }
-    #gann-message {
-      margin-top: 50px;
-      font-weight: bold;
-      font-size: 20px;
-      color: maroon;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kohen/Levi Profile Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div id="bsed">בס׳׳ד</div>
-  
-  <h1>Tribe of Levi and Kohanim Registry (LocalStorage)</h1>
-  
-  <div id="register">
-    <h2>Create Profile</h2>
-    <form id="registerForm">
-      <input type="text" id="fullName" placeholder="Full Name" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="text" id="hebrewName" placeholder="Hebrew Name" required>
-      <select id="status" required>
-        <option value="">Select Status</option>
-        <option value="Kohen">Kohen</option>
-        <option value="Levi">Levi</option>
-      </select>
-      <select id="minhag" required>
-        <option value="">Select Minhag</option>
-        <option value="Ashkenazi">Ashkenazi</option>
-        <option value="Sephardi">Sephardi</option>
-        <option value="Sefard">Sefard</option>
-        <option value="Temani">Temani</option>
-        <option value="Chabad">Chabad/Ari</option>
-      </select>
-      <input type="file" id="profilePic" accept="image/*">
-      <button type="submit">Register</button>
-    </form>
-  </div>
+<body class="bg-gray-100">
+    <div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded">
+        <h1 class="text-2xl font-bold mb-4">Create Profile</h1>
+        <form id="profileForm" class="space-y-4">
+            <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" id="fullName" name="fullName" required
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" name="email" required
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div>
+                <label for="hebrewName" class="block text-sm font-medium text-gray-700">Full Hebrew Name</label>
+                <input type="text" id="hebrewName" name="hebrewName" required
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Status</label>
+                <div class="mt-2 space-y-2">
+                    <label class="flex items-center">
+                        <input type="radio" name="status" value="Kohen" required
+                            class="form-radio">
+                        <span class="ml-2">Kohen</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="status" value="Levi" required
+                            class="form-radio">
+                        <span class="ml-2">Levi</span>
+                    </label>
+                </div>
+            </div>
+            <div>
+                <label for="minhag" class="block text-sm font-medium text-gray-700">Minhag</label>
+                <select id="minhag" name="minhag" required
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="Ashkenazi">Ashkenazi</option>
+                    <option value="Sephardi">Sephardi</option>
+                    <option value="Sefard">Sefard</option>
+                    <option value="Temani">Temani</option>
+                    <option value="Chabad/Ari">Chabad/Ari</option>
+                    <option value="Persian">Persian</option>
+                    <option value="Aram Soba">Aram Soba</option>
+                </select>
+            </div>
+            <div>
+                <label for="picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
+                <input type="file" id="picture" name="picture" accept="image/*"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+            <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700">Create Profile</button>
+        </form>
 
-  <div id="search">
-    <h2>Search Profiles</h2>
-    <input type="text" id="searchQuery" placeholder="Search by name or email">
-    <button onclick="searchProfiles()">Search</button>
-    <div class="search-results" id="results"></div>
-  </div>
+        <h2 class="text-xl font-bold mt-8 mb-4">Search Profiles</h2>
+        <input type="text" id="searchInput" placeholder="Search by name, Hebrew name, or email"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+        <div id="searchResults" class="mt-4 space-y-4"></div>
+    </div>
 
-  <div id="gann-message">Go Gann!</div>
+    <script>
+        const form = document.getElementById('profileForm');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
 
-  <script>
-    // Use 'let' so we can reassign after loading from localStorage
-    let profiles = [];
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
 
-    // 1) On page load, retrieve 'profiles' from localStorage (if it exists)
-    window.onload = function() {
-      const storedProfiles = localStorage.getItem('profiles');
-      if (storedProfiles) {
-        profiles = JSON.parse(storedProfiles);
-      }
-    };
+            const response = await fetch('/api/profiles', {
+                method: 'POST',
+                body: formData,
+            });
 
-    // 2) Register Form Submission
-    document.getElementById('registerForm').onsubmit = function(event) {
-      event.preventDefault();
-      const fullName = document.getElementById('fullName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const hebrewName = document.getElementById('hebrewName').value.trim();
-      const status = document.getElementById('status').value.trim();
-      const minhag = document.getElementById('minhag').value.trim();
-      const profilePic = document.getElementById('profilePic').files[0];
-      
-      if (!status || !minhag) {
-        alert('Please select a status and minhag.');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const profile = {
-          fullName,
-          email,
-          hebrewName,
-          status,
-          minhag,
-          profilePic: e.target.result || "" // base64 string or empty
-        };
-        profiles.push(profile);
-
-        // Save to localStorage each time we modify 'profiles'
-        localStorage.setItem('profiles', JSON.stringify(profiles));
-
-        alert('Profile created successfully!');
-        document.getElementById('registerForm').reset();
-      };
-      
-      if (profilePic) {
-        reader.readAsDataURL(profilePic);
-      } else {
-        // If no image is selected, push the profile without a picture
-        const profile = {
-          fullName,
-          email,
-          hebrewName,
-          status,
-          minhag,
-          profilePic: "" // Empty if no picture uploaded
-        };
-        profiles.push(profile);
-        localStorage.setItem('profiles', JSON.stringify(profiles));
-        alert('Profile created successfully!');
-        document.getElementById('registerForm').reset();
-      }
-    };
-
-    // 3) Search Profiles
-    function searchProfiles() {
-      const query = document.getElementById('searchQuery').value.toLowerCase().trim();
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = '';
-
-      // Filter 'profiles' array by partial match in name or email
-      const filteredProfiles = profiles.filter(profile => 
-        profile.fullName.toLowerCase().includes(query) || 
-        profile.email.toLowerCase().includes(query)
-      );
-
-      if (filteredProfiles.length) {
-        filteredProfiles.forEach(profile => {
-          resultsDiv.innerHTML += `
-            <p>
-              <strong>${profile.fullName}</strong> (${capitalize(profile.status)}, ${capitalize(profile.minhag)})<br>
-              <em>Hebrew Name:</em> ${profile.hebrewName}<br>
-              <em>Email:</em> ${profile.email}
-            </p>
-          `;
-          if (profile.profilePic) {
-            resultsDiv.innerHTML += `
-              <img class="profile-pic" src="${profile.profilePic}" alt="Profile Picture">
-            `;
-          }
+            if (response.ok) {
+                alert('Profile created successfully!');
+                form.reset();
+            } else {
+                alert('Failed to create profile.');
+            }
         });
-      } else {
-        resultsDiv.innerHTML = '<p>No profiles found.</p>';
-      }
-    }
 
-    // Helper function to capitalize first letter
-    function capitalize(word) {
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    }
-  </script>
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value;
+
+            const response = await fetch(`/api/profiles?search=${query}`);
+            if (response.ok) {
+                const profiles = await response.json();
+                searchResults.innerHTML = profiles.map(profile => `
+                    <div class="p-4 border rounded-md">
+                        <p><strong>Name:</strong> ${profile.fullName}</p>
+                        <p><strong>Email:</strong> ${profile.email}</p>
+                        <p><strong>Hebrew Name:</strong> ${profile.hebrewName}</p>
+                        <p><strong>Status:</strong> ${profile.status}</p>
+                        <p><strong>Minhag:</strong> ${profile.minhag}</p>
+                        <img src="${profile.picture}" alt="Profile Picture" class="w-20 h-20 rounded-full mt-2">
+                    </div>
+                `).join('');
+            } else {
+                searchResults.innerHTML = '<p>No profiles found.</p>';
+            }
+        });
+    </script>
 </body>
 </html>
